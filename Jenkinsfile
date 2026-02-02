@@ -1,12 +1,13 @@
 pipeline {
     agent any
 
-    // environment {
-    //     AWS_REGION = 'eu-north-1'
-    //     ECR_REPO = 'medical-bot'
-    //     IMAGE_TAG = 'latest'
-    //     SERVICE_NAME = 'llmops-medical-service'
-    // }
+    environment {
+        SONAR_PROJECT_KEY = 'LLMOPS'
+		SONAR_SCANNER_HOME = tool 'sonarqube-installer'
+        // AWS_REGION = 'us-east-1'
+        // ECR_REPO = 'my-repo'
+        // IMAGE_TAG = 'latest'
+	}
 
     stages {
         stage('Clone GitHub Repo') {
@@ -17,6 +18,23 @@ pipeline {
                 }
             }
         }
+
+        stage('SonarQube Analysis'){
+			steps {
+				withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+    					
+					withSonarQubeEnv('sonarqube') {
+    						sh """
+						${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+						-Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+						-Dsonar.sources=. \
+						-Dsonar.host.url=http://sonarqube-dind:9000 \
+						-Dsonar.login=${SONAR_TOKEN}
+						"""
+					}
+				}
+			}
+		}
 
         // stage('Build, Scan, and Push Docker Image to ECR') {
         //     steps {
