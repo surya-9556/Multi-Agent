@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "multi-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "langchain",
+    "streamlit",
+    "fastapi",
+    "uvicorn",
+    "python-dotenv",
+    "langchain-community",
+    "langgraph",
+    "pydantic",
+    "langchain-groq"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
